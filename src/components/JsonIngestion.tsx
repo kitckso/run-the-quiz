@@ -120,7 +120,8 @@ export function JsonIngestion() {
       "questionText": "What is the capital of France?",
       "options": ["London", "Paris", "Berlin", "Madrid"],
       "correctAnswer": "Paris",
-      "explanation": "Paris has been the capital of France since the 10th century."
+      "explanation": "Paris has been the capital of France since the 10th century.",
+      "hints": ["This city is known as the City of Light", "It is located on the River Seine"]
     },
     {
       "id": "q2",
@@ -128,7 +129,8 @@ export function JsonIngestion() {
       "questionText": "The Earth is flat.",
       "options": ["True", "False"],
       "correctAnswer": "False",
-      "explanation": "The Earth is an oblate spheroid, not flat."
+      "explanation": "The Earth is an oblate spheroid, not flat.",
+      "hints": ["Ancient sailors noticed ships disappearing hull-first over the horizon"]
     },
     {
       "id": "q3",
@@ -136,7 +138,8 @@ export function JsonIngestion() {
       "questionText": "Which of the following are programming languages?",
       "options": ["Python", "HTML", "JavaScript", "CSS"],
       "correctAnswer": ["Python", "JavaScript"],
-      "explanation": "Python and JavaScript are programming languages. HTML and CSS are markup/styling languages."
+      "explanation": "Python and JavaScript are programming languages. HTML and CSS are markup/styling languages.",
+      "hints": ["Two are correct", "One of them is named after a snake"]
     },
     {
       "id": "q4",

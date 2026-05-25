@@ -1,6 +1,10 @@
 import type { QuizQuestion, UserAnswers, QuizResult, QuestionResult } from "../types/quiz";
 
-export function gradeQuiz(questions: QuizQuestion[], userAnswers: UserAnswers): QuizResult {
+export function gradeQuiz(
+  questions: QuizQuestion[],
+  userAnswers: UserAnswers,
+  hintsUsed: Record<string, number> = {},
+): QuizResult {
   const questionResults: QuestionResult[] = questions.map((question) => {
     const userAnswer = userAnswers[question.id];
     const isCorrect = checkAnswer(question, userAnswer);
@@ -9,6 +13,7 @@ export function gradeQuiz(questions: QuizQuestion[], userAnswers: UserAnswers): 
       question,
       userAnswer: userAnswer ?? (question.type === "multi_select" ? [] : ""),
       isCorrect,
+      hintsUsed: hintsUsed[question.id] ?? 0,
     };
   });
 

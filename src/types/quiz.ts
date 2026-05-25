@@ -7,6 +7,7 @@ export interface QuizQuestion {
   options: string[];
   correctAnswer: string | string[];
   explanation: string;
+  hints?: string[];
 }
 
 export interface QuizData {
@@ -25,6 +26,7 @@ export interface QuestionResult {
   question: QuizQuestion;
   userAnswer: string | string[];
   isCorrect: boolean;
+  hintsUsed: number;
 }
 
 export interface QuizResult {

@@ -8,6 +8,7 @@ interface QuizStore {
   quizConfig: QuizConfig;
   currentQuestionIndex: number;
   userAnswers: Record<string, string | string[]>;
+  hintsUsed: Record<string, number>;
   quizResult: QuizResult | null;
 
   setQuizData: (data: QuizData) => void;
@@ -16,6 +17,7 @@ interface QuizStore {
   setQuizConfig: (config: Partial<QuizConfig>) => void;
   setCurrentQuestionIndex: (index: number) => void;
   setUserAnswer: (questionId: string, answer: string | string[]) => void;
+  useHint: (questionId: string) => void;
   setQuizResult: (result: QuizResult | null) => void;
   reset: () => void;
 }
@@ -27,6 +29,7 @@ const initialState = {
   quizConfig: { timeLimit: null, shuffleQuestions: false },
   currentQuestionIndex: 0,
   userAnswers: {} as Record<string, string | string[]>,
+  hintsUsed: {} as Record<string, number>,
   quizResult: null as QuizResult | null,
 };
 
@@ -49,6 +52,14 @@ export const useQuizStore = create<QuizStore>((set) => ({
   setUserAnswer: (questionId, answer) =>
     set((state) => ({
       userAnswers: { ...state.userAnswers, [questionId]: answer },
+    })),
+
+  useHint: (questionId) =>
+    set((state) => ({
+      hintsUsed: {
+        ...state.hintsUsed,
+        [questionId]: (state.hintsUsed[questionId] ?? 0) + 1,
+      },
     })),
 
   setQuizResult: (result) => set({ quizResult: result }),

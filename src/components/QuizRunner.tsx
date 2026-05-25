@@ -11,8 +11,10 @@ import {
   Stack,
   Title,
   Paper,
+  Tooltip,
+  ActionIcon,
 } from "@mantine/core";
-import { IconArrowLeft, IconArrowRight, IconSend } from "@tabler/icons-react";
+import { IconArrowLeft, IconArrowRight, IconSend, IconBulb } from "@tabler/icons-react";
 import { useQuizStore } from "../store/quizStore";
 import { gradeQuiz } from "../lib/grading";
 import type { QuizQuestion } from "../types/quiz";
@@ -98,7 +100,7 @@ export function QuizRunner() {
       ? [...quizData.questions].sort(() => Math.random() - 0.5)
       : quizData.questions;
 
-    const result = gradeQuiz(questionsToUse, userAnswers);
+    const result = gradeQuiz(questionsToUse, userAnswers, useQuizStore.getState().hintsUsed);
     setQuizResult(result);
     setScreen("results");
   }, [quizData, quizConfig.shuffleQuestions, userAnswers, setQuizResult, setScreen]);
@@ -142,6 +144,9 @@ export function QuizRunner() {
     }
   };
 
+  const hintsUsedMap = useQuizStore((s) => s.hintsUsed);
+  const revealHint = useQuizStore((s) => s.useHint);
+
   if (!question) {
     return <Text>No questions available.</Text>;
   }
@@ -152,6 +157,10 @@ export function QuizRunner() {
     question.type === "multi_select"
       ? Array.isArray(currentAnswer) && currentAnswer.length > 0
       : typeof currentAnswer === "string" && currentAnswer.trim().length > 0;
+
+  const hints = question.hints ?? [];
+  const hintsUsedCount = hintsUsedMap[question.id] ?? 0;
+  const remainingHints = hints.length - hintsUsedCount;
 
   return (
     <Card shadow="sm" padding="lg" radius="md" maw={720} mx="auto">
@@ -175,6 +184,17 @@ export function QuizRunner() {
             {question.questionText}
           </Text>
 
+          {hintsUsedCount > 0 && (
+            <Paper p="xs" withBorder mb="sm" bg="var(--mantine-color-yellow-light)">
+              <Text size="sm">
+                <Text span fw={500}>
+                  Hint{": "}
+                </Text>
+                {hints.slice(0, hintsUsedCount).join(" | ")}
+              </Text>
+            </Paper>
+          )}
+
           <QuestionRenderer
             question={question}
             value={currentAnswer}
@@ -183,14 +203,41 @@ export function QuizRunner() {
         </Paper>
 
         <Group justify="space-between">
-          <Button
-            variant="outline"
-            leftSection={<IconArrowLeft size={16} />}
-            onClick={handlePrev}
-            disabled={currentQuestionIndex === 0}
-          >
-            Previous
-          </Button>
+          <Group>
+            <Button
+              variant="outline"
+              leftSection={<IconArrowLeft size={16} />}
+              onClick={handlePrev}
+              disabled={currentQuestionIndex === 0}
+            >
+              Previous
+            </Button>
+
+            <Tooltip
+              label={
+                hints.length === 0
+                  ? "No hints available"
+                  : remainingHints === 0
+                    ? "No more hints"
+                    : "Reveal a hint"
+              }
+            >
+              <ActionIcon
+                variant="light"
+                color="yellow"
+                size="lg"
+                disabled={hints.length === 0 || remainingHints === 0}
+                onClick={() => revealHint(question.id)}
+              >
+                <IconBulb size={18} />
+              </ActionIcon>
+            </Tooltip>
+            {hints.length > 0 && (
+              <Text size="xs" c="dimmed">
+                {hintsUsedCount}/{hints.length}
+              </Text>
+            )}
+          </Group>
 
           <Button
             rightSection={isLastQuestion ? <IconSend size={16} /> : <IconArrowRight size={16} />}

@@ -40,7 +40,8 @@ const JSON_SCHEMA_TEMPLATE = `{
       "questionText": "string",
       "options": ["string"],
       "correctAnswer": "string | string[]",
-      "explanation": "string"
+      "explanation": "string",
+      "hints": ["string"]
     }
   ]
 }`;
@@ -87,6 +88,7 @@ Every question object MUST include ALL of these fields. Do not omit any:
 - "options" (array of strings)
 - "correctAnswer" (string or array of strings)
 - "explanation" (string)
+- "hints" (array of strings, optional - progressive hints that reveal one at a time)
 
 The JSON must conform EXACTLY to this schema:
 ${JSON_SCHEMA_TEMPLATE}
@@ -98,7 +100,8 @@ EXAMPLE of a correct question object:
   "type": "mcq",
   "options": ["London", "Paris", "Berlin", "Madrid"],
   "correctAnswer": "Paris",
-  "explanation": "Paris has been the capital of France since the 10th century."
+  "explanation": "Paris has been the capital of France since the 10th century.",
+  "hints": ["This city is known as the City of Light", "It is located on the River Seine"]
 }
 
 Rules:
@@ -110,7 +113,7 @@ Rules:
 - For "short_answer" type, "options" can be empty array and "correctAnswer" is the exact expected answer string.
 - "explanation" should explain why the correct answer is right.
 
-Double-check each question object before outputting. Every single one must have "questionText", "id", "type", "options", "correctAnswer", and "explanation".`;
+Double-check each question object before outputting. Every single one must have "questionText", "id", "type", "options", "correctAnswer", and "explanation". Optionally include "hints" as an array of progressive hint strings.`;
   };
 
   const prompt = topic.trim() ? generatePrompt() : "";

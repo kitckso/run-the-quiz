@@ -11,7 +11,7 @@ import {
   RingProgress,
   Center,
 } from "@mantine/core";
-import { IconCheck, IconX } from "@tabler/icons-react";
+import { IconCheck, IconX, IconBulb } from "@tabler/icons-react";
 import { useQuizStore } from "../store/quizStore";
 
 function displayAnswer(answer: string | string[]): string {
@@ -43,6 +43,7 @@ export function ResultsDashboard() {
     return <Text>No results available.</Text>;
   }
 
+  const totalHintsUsed = quizResult.questionResults.reduce((s, r) => s + r.hintsUsed, 0);
   const color = scoreColor(quizResult.percentage);
 
   return (
@@ -54,6 +55,12 @@ export function ResultsDashboard() {
             <Text size="sm" c="dimmed">
               {quizResult.score}/{quizResult.total} points
             </Text>
+            {totalHintsUsed > 0 && (
+              <Text size="xs" c="dimmed" mt={4}>
+                <IconBulb size={12} style={{ verticalAlign: "middle", marginRight: 2 }} />
+                Hints used: {totalHintsUsed}
+              </Text>
+            )}
           </Stack>
 
           <Center>
@@ -117,6 +124,12 @@ export function ResultsDashboard() {
                           {result.question.explanation}
                         </Text>
                       </Paper>
+                    )}
+                    {result.question.hints && result.question.hints.length > 0 && (
+                      <Text size="sm">
+                        <IconBulb size={14} style={{ verticalAlign: "middle", marginRight: 4 }} />
+                        Hints used: {result.hintsUsed}/{result.question.hints.length}
+                      </Text>
                     )}
                   </Stack>
                 </Accordion.Panel>
