@@ -1,12 +1,9 @@
-import { useEffect } from "react";
 import { Container, Title, Text, Stack } from "@mantine/core";
 import { useQuizStore } from "./store/quizStore";
 import { PromptGenerator } from "./components/PromptGenerator";
 import { JsonIngestion } from "./components/JsonIngestion";
 import { QuizRunner } from "./components/QuizRunner";
 import { ResultsDashboard } from "./components/ResultsDashboard";
-import { downloadQuizJson } from "./lib/fileio";
-import type { QuizData } from "./types/quiz";
 
 function HomeScreen() {
   return (
@@ -25,30 +22,6 @@ function HomeScreen() {
 
 function App() {
   const screen = useQuizStore((s) => s.screen);
-  const setQuizData = useQuizStore((s) => s.setQuizData);
-  const setPrefilledJson = useQuizStore((s) => s.setPrefilledJson);
-
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (!hash) return;
-
-    const idMatch = hash.match(/[?&]id=([^&]+)/);
-    if (!idMatch) return;
-
-    const key = idMatch[1];
-
-    downloadQuizJson(key)
-      .then((jsonString) => {
-        const data = JSON.parse(jsonString) as QuizData;
-        if (data.quizTitle && Array.isArray(data.questions)) {
-          setPrefilledJson(jsonString);
-          setQuizData(data);
-        }
-      })
-      .catch(() => {
-        // Failed to load, stay on home
-      });
-  }, [setPrefilledJson, setQuizData]);
 
   const renderScreen = () => {
     switch (screen) {

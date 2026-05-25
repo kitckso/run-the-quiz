@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Card,
   Text,
@@ -12,9 +11,8 @@ import {
   RingProgress,
   Center,
 } from "@mantine/core";
-import { IconCheck, IconX, IconShare } from "@tabler/icons-react";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import { useQuizStore } from "../store/quizStore";
-import { ShareModal } from "./ShareModal";
 
 function displayAnswer(answer: string | string[]): string {
   if (Array.isArray(answer)) return answer.join(", ");
@@ -40,7 +38,6 @@ function scoreColor(percentage: number): string {
 
 export function ResultsDashboard() {
   const { quizResult, quizData, reset } = useQuizStore();
-  const [shareOpened, setShareOpened] = useState(false);
 
   if (!quizResult || !quizData) {
     return <Text>No results available.</Text>;
@@ -66,21 +63,19 @@ export function ResultsDashboard() {
               roundCaps
               sections={[{ value: quizResult.percentage, color }]}
               label={
-                <Stack align="center" gap={0}>
-                  <Text fw={900} size="44" c={color}>
-                    {quizResult.percentage}%
-                  </Text>
-                  <Text size="sm" c="dimmed">
+                <Text ta="center" fw={900} fz={44} lh={1} c={color}>
+                  {quizResult.percentage}%
+                  <Text component="span" display="block" size="sm" c="dimmed" fw={400}>
                     {scoreLabel(quizResult.percentage)}
                   </Text>
-                </Stack>
+                </Text>
               }
             />
           </Center>
 
           <Title order={4}>Review</Title>
 
-          <Accordion>
+          <Accordion multiple defaultValue={quizResult.questionResults.map((r) => r.question.id)}>
             {quizResult.questionResults.map((result, i) => (
               <Accordion.Item key={result.question.id} value={result.question.id}>
                 <Accordion.Control>
@@ -114,7 +109,7 @@ export function ResultsDashboard() {
                       </Text>
                     )}
                     {result.question.explanation && (
-                      <Paper p="sm" withBorder bg="var(--mantine-color-blue-0)">
+                      <Paper p="sm" withBorder bg="var(--mantine-color-blue-light)">
                         <Text size="sm">
                           <Text span fw={500}>
                             Explanation:
@@ -130,27 +125,12 @@ export function ResultsDashboard() {
           </Accordion>
 
           <Group justify="center" mt="md">
-            <Button
-              variant="light"
-              leftSection={<IconShare size={16} />}
-              onClick={() => setShareOpened(true)}
-            >
-              Share Quiz
-            </Button>
             <Button variant="outline" onClick={reset}>
               Back to Home
             </Button>
           </Group>
         </Stack>
       </Card>
-
-      {quizData && (
-        <ShareModal
-          opened={shareOpened}
-          onClose={() => setShareOpened(false)}
-          quizData={quizData}
-        />
-      )}
     </>
   );
 }

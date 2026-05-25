@@ -11,9 +11,8 @@ import {
   Button,
   Group,
 } from "@mantine/core";
-import { IconAlertCircle, IconPlayerPlay, IconShare } from "@tabler/icons-react";
+import { IconAlertCircle, IconPlayerPlay } from "@tabler/icons-react";
 import { useQuizStore } from "../store/quizStore";
-import { ShareModal } from "./ShareModal";
 import type { QuizData } from "../types/quiz";
 
 export function JsonIngestion() {
@@ -28,7 +27,6 @@ export function JsonIngestion() {
   const [jsonValue, setJsonValue] = useState("");
   const [parseError, setParseError] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<QuizData | null>(null);
-  const [shareOpened, setShareOpened] = useState(false);
 
   useEffect(() => {
     if (prefilledJson && !jsonValue) {
@@ -171,27 +169,11 @@ export function JsonIngestion() {
                 <Button size="lg" leftSection={<IconPlayerPlay size={20} />} onClick={handleStart}>
                   Start Quiz
                 </Button>
-                <Button
-                  size="lg"
-                  variant="light"
-                  leftSection={<IconShare size={20} />}
-                  onClick={() => setShareOpened(true)}
-                >
-                  Share
-                </Button>
               </Group>
             </>
           )}
         </Stack>
       </Paper>
-
-      {activeData && (
-        <ShareModal
-          opened={shareOpened}
-          onClose={() => setShareOpened(false)}
-          quizData={activeData}
-        />
-      )}
     </>
   );
 }
