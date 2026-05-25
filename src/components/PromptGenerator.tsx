@@ -107,7 +107,7 @@ EXAMPLE of a correct question object:
 Rules:
 - Every question MUST have a non-empty "questionText" field. This is the most commonly missed field.
 - "id" must be a unique string identifier for each question (e.g., "q1", "q2").
-- For "mcq" type, "correctAnswer" is a single string matching one of the "options".
+- For "mcq" type, "correctAnswer" is a single string matching one of the "options". All other options must be clearly wrong — never include two options that could both be correct. Distractors should be plausible but unambiguously incorrect.
 - For "multi_select" type, "correctAnswer" is an array of strings.
 - For "true_false" type, use options ["True", "False"] and "correctAnswer" is "True" or "False".
 - For "short_answer" type, "options" can be empty array and "correctAnswer" is the exact expected answer string.
