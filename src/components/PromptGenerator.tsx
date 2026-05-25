@@ -12,8 +12,10 @@ import {
   CopyButton,
   ActionIcon,
   Tooltip,
+  Collapse,
+  UnstyledButton,
 } from "@mantine/core";
-import { IconCopy, IconCheck } from "@tabler/icons-react";
+import { IconCopy, IconCheck, IconChevronDown } from "@tabler/icons-react";
 
 const QUESTION_TYPES = [
   { value: "mcq", label: "Multiple Choice (Single Option)" },
@@ -44,6 +46,7 @@ const JSON_SCHEMA_TEMPLATE = `{
 }`;
 
 export function PromptGenerator() {
+  const [opened, setOpened] = useState(true);
   const [topic, setTopic] = useState("");
   const [numQuestions, setNumQuestions] = useState<number | string>("");
   const [difficulty, setDifficulty] = useState<string | null>("medium");
@@ -114,83 +117,95 @@ Double-check each question object before outputting. Every single one must have 
 
   return (
     <Paper shadow="sm" p="lg" radius="md">
-      <Title order={3} mb="md">
-        AI Prompt Generator
-      </Title>
-      <Text c="dimmed" size="sm" mb="lg">
-        Fill out the form below to generate a structured prompt for any AI.
-      </Text>
+      <UnstyledButton onClick={() => setOpened((o) => !o)} style={{ width: "100%" }}>
+        <Group justify="space-between" wrap="nowrap">
+          <Title order={3}>AI Prompt Generator</Title>
+          <IconChevronDown
+            size={20}
+            style={{
+              transform: opened ? "rotate(180deg)" : "rotate(0deg)",
+              transition: "transform 200ms ease",
+            }}
+          />
+        </Group>
+      </UnstyledButton>
 
-      <Stack gap="md">
-        <Textarea
-          label="Topic / Context"
-          description="Detailed description of the quiz subject"
-          placeholder="e.g., A quiz about the solar system covering planets, orbits, and key facts..."
-          minRows={3}
-          value={topic}
-          onChange={(e) => setTopic(e.currentTarget.value)}
-        />
+      <Collapse in={opened}>
+        <Text c="dimmed" size="sm" my="lg">
+          Fill out the form below to generate a structured prompt for any AI.
+        </Text>
 
-        <NumberInput
-          label="Number of Questions"
-          description="Leave blank to let the AI decide"
-          placeholder="Auto"
-          value={numQuestions}
-          onChange={setNumQuestions}
-          min={1}
-          max={100}
-          allowNegative={false}
-          allowDecimal={false}
-        />
+        <Stack gap="md">
+          <Textarea
+            label="Topic / Context"
+            description="Detailed description of the quiz subject"
+            placeholder="e.g., A quiz about the solar system covering planets, orbits, and key facts..."
+            minRows={3}
+            value={topic}
+            onChange={(e) => setTopic(e.currentTarget.value)}
+          />
 
-        <Select
-          label="Difficulty"
-          data={DIFFICULTY_OPTIONS}
-          value={difficulty}
-          onChange={setDifficulty}
-          allowDeselect={false}
-        />
+          <NumberInput
+            label="Number of Questions"
+            description="Leave blank to let the AI decide"
+            placeholder="Auto"
+            value={numQuestions}
+            onChange={setNumQuestions}
+            min={1}
+            max={100}
+            allowNegative={false}
+            allowDecimal={false}
+          />
 
-        <Checkbox.Group
-          label="Question Types"
-          description="Select one or more question types"
-          value={selectedTypes}
-          onChange={setSelectedTypes}
-        >
-          <Group mt="xs">
-            {QUESTION_TYPES.map((type) => (
-              <Checkbox key={type.value} value={type.value} label={type.label} />
-            ))}
-          </Group>
-        </Checkbox.Group>
+          <Select
+            label="Difficulty"
+            data={DIFFICULTY_OPTIONS}
+            value={difficulty}
+            onChange={setDifficulty}
+            allowDeselect={false}
+          />
 
-        {prompt && (
-          <Paper p="sm" withBorder>
-            <Group justify="space-between" mb="xs">
-              <Text size="sm" fw={500}>
-                Generated Prompt
-              </Text>
-              <CopyButton value={prompt}>
-                {({ copied, copy }) => (
-                  <Tooltip label={copied ? "Copied" : "Copy"}>
-                    <ActionIcon color={copied ? "teal" : "gray"} onClick={copy}>
-                      {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-              </CopyButton>
+          <Checkbox.Group
+            label="Question Types"
+            description="Select one or more question types"
+            value={selectedTypes}
+            onChange={setSelectedTypes}
+          >
+            <Group mt="xs">
+              {QUESTION_TYPES.map((type) => (
+                <Checkbox key={type.value} value={type.value} label={type.label} />
+              ))}
             </Group>
-            <Textarea
-              readOnly
-              minRows={8}
-              maxRows={14}
-              autosize
-              value={prompt}
-              styles={{ input: { fontFamily: "monospace", fontSize: 13 } }}
-            />
-          </Paper>
-        )}
-      </Stack>
+          </Checkbox.Group>
+
+          {prompt && (
+            <Paper p="sm" withBorder>
+              <Group justify="space-between" mb="xs">
+                <Text size="sm" fw={500}>
+                  Generated Prompt
+                </Text>
+                <CopyButton value={prompt}>
+                  {({ copied, copy }) => (
+                    <Tooltip label={copied ? "Copied" : "Copy"}>
+                      <ActionIcon color={copied ? "teal" : "gray"} onClick={copy}>
+                        {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
+                </CopyButton>
+              </Group>
+              <Textarea
+                readOnly
+                minRows={8}
+                maxRows={14}
+                autosize
+                value={prompt}
+                styles={{ input: { fontFamily: "monospace", fontSize: 13 } }}
+              />
+            </Paper>
+          )}
+        </Stack>
+      </Collapse>
     </Paper>
   );
 }

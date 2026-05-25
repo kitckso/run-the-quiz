@@ -11,7 +11,7 @@ import {
   Button,
   Group,
 } from "@mantine/core";
-import { IconAlertCircle, IconPlayerPlay } from "@tabler/icons-react";
+import { IconAlertCircle, IconPlayerPlay, IconBolt } from "@tabler/icons-react";
 import { useQuizStore } from "../store/quizStore";
 import type { QuizData } from "../types/quiz";
 
@@ -107,6 +107,53 @@ export function JsonIngestion() {
         </Text>
 
         <Stack gap="md">
+          <Button
+            variant="light"
+            leftSection={<IconBolt size={18} />}
+            onClick={() => {
+              const demo = `{
+  "quizTitle": "General Knowledge Demo",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "questionText": "What is the capital of France?",
+      "options": ["London", "Paris", "Berlin", "Madrid"],
+      "correctAnswer": "Paris",
+      "explanation": "Paris has been the capital of France since the 10th century."
+    },
+    {
+      "id": "q2",
+      "type": "true_false",
+      "questionText": "The Earth is flat.",
+      "options": ["True", "False"],
+      "correctAnswer": "False",
+      "explanation": "The Earth is an oblate spheroid, not flat."
+    },
+    {
+      "id": "q3",
+      "type": "multi_select",
+      "questionText": "Which of the following are programming languages?",
+      "options": ["Python", "HTML", "JavaScript", "CSS"],
+      "correctAnswer": ["Python", "JavaScript"],
+      "explanation": "Python and JavaScript are programming languages. HTML and CSS are markup/styling languages."
+    },
+    {
+      "id": "q4",
+      "type": "short_answer",
+      "questionText": "What year did World War II end?",
+      "options": [],
+      "correctAnswer": "1945",
+      "explanation": "World War II ended in 1945 with the surrender of Germany and Japan."
+    }
+  ]
+}`;
+              setJsonValue(demo);
+              handleJsonChange(demo);
+            }}
+          >
+            Load Demo Quiz
+          </Button>
           <JsonInput
             label="Quiz JSON Data"
             placeholder='{"quizTitle": "...", "questions": [...]}'
