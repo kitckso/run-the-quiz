@@ -1,9 +1,11 @@
-import { Container, Title, Text, Stack } from "@mantine/core";
+import { Container, Title, Text, Stack, Group } from "@mantine/core";
 import { useQuizStore } from "./store/quizStore";
 import { PromptGenerator } from "./components/PromptGenerator";
 import { JsonIngestion } from "./components/JsonIngestion";
 import { QuizRunner } from "./components/QuizRunner";
 import { ResultsDashboard } from "./components/ResultsDashboard";
+import { PastResults } from "./components/PastResults";
+import { SavedQuizzes } from "./components/SavedQuizzes";
 
 function HomeScreen() {
   return (
@@ -16,6 +18,10 @@ function HomeScreen() {
       </Stack>
       <PromptGenerator />
       <JsonIngestion />
+      <Group justify="center">
+        <SavedQuizzes />
+        <PastResults />
+      </Group>
     </Stack>
   );
 }

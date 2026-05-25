@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { QuizData, QuizConfig, QuizResult, Screen } from "../types/quiz";
+import type { SavedResult } from "../lib/storage";
 
 interface QuizStore {
   screen: Screen;
@@ -19,6 +20,7 @@ interface QuizStore {
   setUserAnswer: (questionId: string, answer: string | string[]) => void;
   useHint: (questionId: string) => void;
   setQuizResult: (result: QuizResult | null) => void;
+  loadSavedResult: (saved: SavedResult) => void;
   reset: () => void;
 }
 
@@ -63,6 +65,18 @@ export const useQuizStore = create<QuizStore>((set) => ({
     })),
 
   setQuizResult: (result) => set({ quizResult: result }),
+
+  loadSavedResult: (saved) =>
+    set({
+      quizData: saved.quizData,
+      quizResult: {
+        score: saved.score,
+        total: saved.total,
+        percentage: saved.percentage,
+        questionResults: saved.questionResults,
+      },
+      screen: "results",
+    }),
 
   reset: () => set(initialState),
 }));

@@ -11,8 +11,9 @@ import {
   Button,
   Group,
 } from "@mantine/core";
-import { IconAlertCircle, IconPlayerPlay, IconBolt } from "@tabler/icons-react";
+import { IconAlertCircle, IconPlayerPlay, IconBolt, IconDeviceFloppy } from "@tabler/icons-react";
 import { useQuizStore } from "../store/quizStore";
+import { saveQuiz } from "../lib/storage";
 import type { QuizData } from "../types/quiz";
 
 export function JsonIngestion() {
@@ -27,10 +28,12 @@ export function JsonIngestion() {
   const [jsonValue, setJsonValue] = useState("");
   const [parseError, setParseError] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<QuizData | null>(null);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (prefilledJson && !jsonValue) {
+    if (prefilledJson) {
       setJsonValue(prefilledJson);
+      setSaved(false);
       try {
         const parsed = JSON.parse(prefilledJson) as QuizData;
         if (parsed.quizTitle && Array.isArray(parsed.questions)) {
@@ -40,13 +43,14 @@ export function JsonIngestion() {
         // ignore
       }
     }
-  }, [prefilledJson, jsonValue]);
+  }, [prefilledJson]);
 
   const handleJsonChange = useCallback(
     (value: string) => {
       setJsonValue(value);
       setParseError(null);
       setParsedData(null);
+      setSaved(false);
       setPrefilledJson("");
 
       if (!value.trim()) return;
@@ -218,6 +222,18 @@ export function JsonIngestion() {
               <Group justify="center" mt="md">
                 <Button size="lg" leftSection={<IconPlayerPlay size={20} />} onClick={handleStart}>
                   Start Quiz
+                </Button>
+                <Button
+                  size="lg"
+                  variant="light"
+                  leftSection={<IconDeviceFloppy size={20} />}
+                  onClick={() => {
+                    saveQuiz(activeData);
+                    setSaved(true);
+                  }}
+                  color={saved ? "green" : undefined}
+                >
+                  {saved ? "Saved" : "Save Quiz"}
                 </Button>
               </Group>
             </>

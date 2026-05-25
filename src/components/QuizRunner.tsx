@@ -17,6 +17,7 @@ import {
 import { IconArrowLeft, IconArrowRight, IconSend, IconBulb } from "@tabler/icons-react";
 import { useQuizStore } from "../store/quizStore";
 import { gradeQuiz } from "../lib/grading";
+import { saveResult } from "../lib/storage";
 import type { QuizQuestion } from "../types/quiz";
 
 function formatTime(seconds: number): string {
@@ -101,6 +102,7 @@ export function QuizRunner() {
       : quizData.questions;
 
     const result = gradeQuiz(questionsToUse, userAnswers, useQuizStore.getState().hintsUsed);
+    saveResult(result, quizData);
     setQuizResult(result);
     setScreen("results");
   }, [quizData, quizConfig.shuffleQuestions, userAnswers, setQuizResult, setScreen]);
