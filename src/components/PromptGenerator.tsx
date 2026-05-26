@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Textarea,
   NumberInput,
@@ -16,6 +16,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { IconCopy, IconCheck, IconChevronDown } from "@tabler/icons-react";
+import { useQuizStore } from "../store/quizStore";
 
 const QUESTION_TYPES = [
   { value: "mcq", label: "Multiple Choice (Single Option)" },
@@ -47,7 +48,17 @@ const JSON_SCHEMA_TEMPLATE = `{
 }`;
 
 export function PromptGenerator() {
+  const promptCollapsed = useQuizStore((s) => s.promptCollapsed);
+  const setPromptCollapsed = useQuizStore((s) => s.setPromptCollapsed);
   const [opened, setOpened] = useState(true);
+
+  // Collapse when a quiz is loaded from a shared link
+  useEffect(() => {
+    if (promptCollapsed) {
+      setOpened(false);
+      setPromptCollapsed(false); // reset so subsequent manual toggles work normally
+    }
+  }, [promptCollapsed, setPromptCollapsed]);
   const [topic, setTopic] = useState("");
   const [numQuestions, setNumQuestions] = useState<number | string>("");
   const [difficulty, setDifficulty] = useState<string | null>("medium");
@@ -70,7 +81,9 @@ export function PromptGenerator() {
       ? `Difficulty Level: ${DIFFICULTY_OPTIONS.find((d) => d.value === difficulty)?.label ?? difficulty}`
       : "";
 
-    return `You are a quiz generation AI. Create a quiz based on the following specifications.
+    return `CRITICAL: You must ONLY output raw JSON. Do NOT write any code, do NOT create an app, do NOT generate HTML/CSS/JavaScript, do NOT explain anything. Output nothing but the JSON object below.
+
+You are a JSON data generator. Produce a quiz JSON object matching this spec:
 
 Topic / Context:
 ${topic}
@@ -78,8 +91,6 @@ ${topic}
 ${countInstruction}
 ${diffInstruction}
 ${typesList}
-
-CRITICAL: Your response MUST be ONLY valid JSON. No markdown formatting, no code blocks, no explanation. Return ONLY the raw JSON object.
 
 Every question object MUST include ALL of these fields. Do not omit any:
 - "id" (string, unique)
@@ -113,7 +124,7 @@ Rules:
 - For "short_answer" type, "options" can be empty array and "correctAnswer" is the exact expected answer string.
 - "explanation" should explain why the correct answer is right.
 
-Double-check each question object before outputting. Every single one must have "questionText", "id", "type", "options", "correctAnswer", and "explanation". Optionally include "hints" as an array of progressive hint strings.`;
+FINAL REMINDER: Output ONLY the raw JSON object. No markdown, no code fences, no explanation, no extra text. Just the JSON.`;
   };
 
   const prompt = topic.trim() ? generatePrompt() : "";

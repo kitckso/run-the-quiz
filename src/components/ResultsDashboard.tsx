@@ -11,8 +11,10 @@ import {
   RingProgress,
   Center,
 } from "@mantine/core";
-import { IconCheck, IconX, IconBulb } from "@tabler/icons-react";
+import { IconCheck, IconX, IconBulb, IconQrcode } from "@tabler/icons-react";
+import { useState } from "react";
 import { useQuizStore } from "../store/quizStore";
+import { ShareQRCode } from "./ShareQRCode";
 
 function displayAnswer(answer: string | string[]): string {
   if (Array.isArray(answer)) return answer.join(", ");
@@ -38,6 +40,7 @@ function scoreColor(percentage: number): string {
 
 export function ResultsDashboard() {
   const { quizResult, quizData, reset } = useQuizStore();
+  const [shareOpened, setShareOpened] = useState(false);
 
   if (!quizResult || !quizData) {
     return <Text>No results available.</Text>;
@@ -138,12 +141,29 @@ export function ResultsDashboard() {
           </Accordion>
 
           <Group justify="center" mt="md">
+            <Button
+              variant="light"
+              color="violet"
+              leftSection={<IconQrcode size={16} />}
+              onClick={() => setShareOpened(true)}
+            >
+              Share Quiz
+            </Button>
             <Button variant="outline" onClick={reset}>
               Back to Home
             </Button>
           </Group>
         </Stack>
       </Card>
+
+      {quizData && (
+        <ShareQRCode
+          opened={shareOpened}
+          onClose={() => setShareOpened(false)}
+          quizData={quizData}
+          title="Share Quiz via QR Code"
+        />
+      )}
     </>
   );
 }

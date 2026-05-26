@@ -11,9 +11,16 @@ import {
   Button,
   Group,
 } from "@mantine/core";
-import { IconAlertCircle, IconPlayerPlay, IconBolt, IconDeviceFloppy } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconPlayerPlay,
+  IconBolt,
+  IconDeviceFloppy,
+  IconQrcode,
+} from "@tabler/icons-react";
 import { useQuizStore } from "../store/quizStore";
 import { saveQuiz } from "../lib/storage";
+import { ShareQRCode } from "./ShareQRCode";
 import type { QuizData } from "../types/quiz";
 
 export function JsonIngestion() {
@@ -29,6 +36,7 @@ export function JsonIngestion() {
   const [parseError, setParseError] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<QuizData | null>(null);
   const [saved, setSaved] = useState(false);
+  const [shareOpened, setShareOpened] = useState(false);
 
   useEffect(() => {
     if (prefilledJson) {
@@ -235,7 +243,24 @@ export function JsonIngestion() {
                 >
                   {saved ? "Saved" : "Save Quiz"}
                 </Button>
+                <Button
+                  size="lg"
+                  variant="light"
+                  color="violet"
+                  leftSection={<IconQrcode size={20} />}
+                  onClick={() => setShareOpened(true)}
+                >
+                  Share
+                </Button>
               </Group>
+
+              {activeData && (
+                <ShareQRCode
+                  opened={shareOpened}
+                  onClose={() => setShareOpened(false)}
+                  quizData={activeData}
+                />
+              )}
             </>
           )}
         </Stack>

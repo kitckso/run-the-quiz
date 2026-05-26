@@ -11,6 +11,8 @@ interface QuizStore {
   userAnswers: Record<string, string | string[]>;
   hintsUsed: Record<string, number>;
   quizResult: QuizResult | null;
+  /** Flag set when a quiz is loaded from a shared URL hash */
+  promptCollapsed: boolean;
 
   setQuizData: (data: QuizData) => void;
   setPrefilledJson: (json: string) => void;
@@ -21,6 +23,7 @@ interface QuizStore {
   useHint: (questionId: string) => void;
   setQuizResult: (result: QuizResult | null) => void;
   loadSavedResult: (saved: SavedResult) => void;
+  setPromptCollapsed: (val: boolean) => void;
   reset: () => void;
 }
 
@@ -33,6 +36,7 @@ const initialState = {
   userAnswers: {} as Record<string, string | string[]>,
   hintsUsed: {} as Record<string, number>,
   quizResult: null as QuizResult | null,
+  promptCollapsed: false,
 };
 
 export const useQuizStore = create<QuizStore>((set) => ({
@@ -65,6 +69,8 @@ export const useQuizStore = create<QuizStore>((set) => ({
     })),
 
   setQuizResult: (result) => set({ quizResult: result }),
+
+  setPromptCollapsed: (val) => set({ promptCollapsed: val }),
 
   loadSavedResult: (saved) =>
     set({
