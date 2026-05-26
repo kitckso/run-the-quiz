@@ -13,8 +13,15 @@ import {
   Paper,
   Tooltip,
   ActionIcon,
+  Modal,
 } from "@mantine/core";
-import { IconArrowLeft, IconArrowRight, IconSend, IconBulb } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconSend,
+  IconBulb,
+  IconPlayerStop,
+} from "@tabler/icons-react";
 import { useQuizStore } from "../store/quizStore";
 import { gradeQuiz } from "../lib/grading";
 import { saveResult } from "../lib/storage";
@@ -83,7 +90,9 @@ export function QuizRunner() {
   const setUserAnswer = useQuizStore((s) => s.setUserAnswer);
   const setQuizResult = useQuizStore((s) => s.setQuizResult);
   const setScreen = useQuizStore((s) => s.setScreen);
+  const stopQuiz = useQuizStore((s) => s.stopQuiz);
 
+  const [confirmStop, setConfirmStop] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const submitRef = useRef<() => void>(undefined);
@@ -169,11 +178,22 @@ export function QuizRunner() {
       <Stack gap="md">
         <Group justify="space-between">
           <Title order={3}>{quizData?.quizTitle}</Title>
-          {timeLeft !== null && (
-            <Text fw={700} c={timeLeft <= 60 ? "red" : undefined}>
-              {formatTime(timeLeft)}
-            </Text>
-          )}
+          <Group gap="sm">
+            <Button
+              variant="outline"
+              color="red"
+              size="xs"
+              leftSection={<IconPlayerStop size={14} />}
+              onClick={() => setConfirmStop(true)}
+            >
+              Stop Test
+            </Button>
+            {timeLeft !== null && (
+              <Text fw={700} c={timeLeft <= 60 ? "red" : undefined}>
+                {formatTime(timeLeft)}
+              </Text>
+            )}
+          </Group>
         </Group>
 
         <Progress value={progress} size="sm" />
@@ -250,6 +270,34 @@ export function QuizRunner() {
           </Button>
         </Group>
       </Stack>
+
+      <Modal
+        opened={confirmStop}
+        onClose={() => setConfirmStop(false)}
+        title="Stop Quiz?"
+        size="sm"
+      >
+        <Stack gap="md">
+          <Text size="sm">
+            Your progress will be lost. Are you sure you want to stop this quiz and return to the
+            home screen?
+          </Text>
+          <Group justify="flex-end" gap="sm">
+            <Button variant="outline" onClick={() => setConfirmStop(false)}>
+              Cancel
+            </Button>
+            <Button
+              color="red"
+              onClick={() => {
+                setConfirmStop(false);
+                stopQuiz();
+              }}
+            >
+              Stop Quiz
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </Card>
   );
 }

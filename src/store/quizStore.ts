@@ -25,6 +25,7 @@ interface QuizStore {
   loadSavedResult: (saved: SavedResult) => void;
   setPromptCollapsed: (val: boolean) => void;
   reset: () => void;
+  stopQuiz: () => void;
 }
 
 const initialState = {
@@ -85,4 +86,16 @@ export const useQuizStore = create<QuizStore>((set) => ({
     }),
 
   reset: () => set(initialState),
+
+  /** Keep quiz data but reset runtime progress, re-populate JSON, and go home */
+  stopQuiz: () =>
+    set((state) => ({
+      currentQuestionIndex: 0,
+      userAnswers: {},
+      hintsUsed: {},
+      quizResult: null,
+      screen: "home",
+      // Re-populate the JSON textarea from quizData so the user can see/edit/restart
+      prefilledJson: state.quizData ? JSON.stringify(state.quizData, null, 2) : state.prefilledJson,
+    })),
 }));
